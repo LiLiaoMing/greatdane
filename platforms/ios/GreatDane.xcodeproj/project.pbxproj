@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		1D3623260D0F684500981E51 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* AppDelegate.m */; };
 		1D60589B0D05DD56006BFB54 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; };
@@ -449,8 +450,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Clear Creek Media LLC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Clear Creek Media LLC";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -474,7 +475,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatnew.dane;
 				PRODUCT_NAME = GreatDane;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "3787c7dc-a565-41c2-bb05-517033b1983f";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -484,8 +485,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Clear Creek Media LLC";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Clear Creek Media LLC";
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "GreatDane/GreatDane-Prefix.pch";
@@ -507,7 +508,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatnew.dane;
 				PRODUCT_NAME = GreatDane;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "3787c7dc-a565-41c2-bb05-517033b1983f";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
