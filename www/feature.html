@@ -1,0 +1,219 @@
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/master.css">
+            </head>
+    <body>
+        <section id="content">
+            <h1 id="title"></h1>
+            <a id="home_link" href="first.html"><img src="images/home_btn.png"/></a>
+            <a id="back_link" href="point.html"><img src="images/back_btn.png"/></a>
+
+            <div id="point_top">
+                <h2 id="point_title"></h2>
+                <h4 id="feature_sub"></h4>
+            </div>
+            <a id="feature_compare" href="#"><img src="images/compare_btn.png" /></a>
+            <div class="clear"></div>
+            <div id="features">
+                <div class="point_description" >
+                </div>
+            </div>
+            <div id="opacity"></div>
+            <div class="modal" media-id="1" id="media-id-1"></div>
+            <div class="modal" media-id="2" id="media-id-2"></div>
+            <div class="modal" media-id="3" id="media-id-3"></div>
+            <div class="modal" media-id="4" id="media-id-4"></div>
+            <div class="modal" media-id="5" id="media-id-5"></div>
+            <div class="modal" media-id="6" id="media-id-6"></div>
+            <div class="modal" media-id="7" id="media-id-7"></div>
+            <div class="modal" media-id="8" id="media-id-8"></div>
+            <div class="modal" media-id="9" id="media-id-9"></div>
+            <div class="modal" media-id="10" id="media-id-10"></div>
+            <div class="modal" media-id="11" id="media-id-11"></div>
+            <div class="modal" media-id="12" id="media-id-12"></div>
+
+        </section>
+        <div style="display: none;">
+        </div>
+
+        <script src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/imgcache.js"></script>
+        <script type="text/javascript" src="js/qimgcache.js"></script>
+        <script src="js/master.js"></script>
+        <script type="text/javascript">
+        var medias = [];
+
+        document.addEventListener('deviceready', onDeviceReady, false);
+
+        function onDeviceReady() {
+            console.log("====================================== feature.html ======================================");
+
+            // Initialize
+            db = window.sqlitePlugin.openDatabase({name: "my.db"});
+
+            ImgCache.options.debug = true;
+            ImgCache.init(function(){
+                console.log('ImgCache init: success!');
+                main();
+            }, function(){
+                console.log('ImgCache init: error! Check the log for errors');
+            });
+
+            function main() {
+                
+                $('#title').html('Product Line > ' + localStorage.getItem('product_name') + ' > ' + localStorage.getItem('product_name') + ' ' + localStorage.getItem('model_name')+ ' > ' + localStorage.getItem('point_name') + ' > ' + localStorage.getItem('feature_name') );
+
+                $('#point_title').append(localStorage.getItem('product_name') + '<span class="blue">' + localStorage.getItem('model_name') + '</span> <span class="gray">: ' + localStorage.getItem('point_name') + '</span>');
+                $('#feature_sub').append(localStorage.getItem('feature_name'));
+                test_log(localStorage.getItem('point_description'));
+                test_log(localStorage.getItem('point_name'))
+                $('.point_description').html(localStorage.getItem('point_description'));
+
+                db.transaction(function(tx) {
+
+                    tx.executeSql("select * from media where feature_id  = ? ORDER BY ranking;", [localStorage.getItem('feature_id')], function(tx, res) {
+
+                        var ii = 0;
+                        function build_body() {
+                                                
+                            if( ii < res.rows.length) {
+                                data = res.rows.item(ii);
+                                medias[ii] = data;
+                                
+                                url = localStorage.getItem('server_base_url') + data['preview_image'];
+                                ImgCache.getCachedFileURL (url, function(img_src, file_url) {
+
+                                    html_buf = '<div class="media">';
+                                    html_buf += '<div class="media-image" data-media-id="' + (ii + 1) + '" style="background-image: URL(' + url + ');" onClick="modal_trigger_func(this);">';
+                                    html_buf += '</div>';
+                                    html_buf += '<div class="media-description-block">';
+                                    html_buf += '<div class="media-name">' + data['name'] + '</div>';
+                                    html_buf += '<div class="media-description">' + data['description_teaser'] + '</div>';
+                                    html_buf += '</div>';
+                                    html_buf += '<div class="clear"></div>';
+                                    html_buf += '</div>';
+
+                                    $('#features').append(html_buf);
+                                    ii++;
+                                    build_body();
+
+                                }, function(){});    
+                            
+                            } else {
+                                
+                                ii = 0;
+                                build_modal();
+                            }
+                        }
+                        build_body();
+
+                        function build_modal() {
+                            
+                            if( ii < medias.length) {
+                                data = medias[ii];
+                                                                                              
+                                url = localStorage.getItem('server_base_url') + data['file'];
+                                
+                                ImgCache.getCachedFileURL (url, function(img_src, file_url) {
+                                    
+                                    $('#media-id-' + (ii + 1)).append('<img class="modal-close" src="images/close_btn.png" onClick="hideModal();" />');
+                                    $('#media-id-' + (ii + 1)).append('<div class="modal-title">' + localStorage.getItem('product_name') +' <span class="blue">' + localStorage.getItem('model_name') + '</span> <span class="gray">: ' + localStorage.getItem('point_name')+ '</span></div>');
+                                    
+                                    $('#media-id-' + (ii + 1)).append('<div >');
+                                    if (data['type'] == 'image')
+                                    {
+                                        $('#media-id-' + (ii + 1)).append('<img src="' + file_url + '" style="width:875px; height:415px;"  />');
+                                    } else if (data['type'] == 'video')
+                                    {
+                                        $('#media-id-' + (ii + 1)).append('<video style="mwidth:875px; height:415px;" controls>' +
+                                           '<source src="' + file_url + '" type="video/mp4"></video>');    
+                                    }
+                                    $('#media-id-' + (ii + 1)).append('</div>');
+
+                                    $('#media-id-' + (ii + 1)).append('<div class="modal-description">' + data['description'] + '</div>');
+                                    
+                                    ii++;
+                                    build_modal();
+
+                                }, function(error){
+
+                                });
+                            }
+                            else
+                            {
+                                //test_log($("#content").html());
+                            }
+                        }
+                        
+                    });
+                        
+                }, function(e) {
+                  console.log("ERROR: " + e.message);
+                });
+
+            }
+        }
+        function setData(ii)
+        {
+            localStorage.setItem('feature_id', features[ii]['id']);
+            localStorage.setItem('feature_name', features[ii]['name']);
+            localStorage.setItem('feature_description', features['description']);
+        }
+            </script>
+            </script>
+    </body>
+</html>
+
+<!--
+    <h1 id="title">
+            Product Line &gt; Everest &gt; Everest TL &gt; Safety &amp; Ergonomics &gt; Flooring
+    </h1>
+    <a id="home_link" href="first.html"><img src="images/home_btn.png"></a>
+            <a id="back_link" href="point.html"><img src="images/back_btn.png"></a>
+
+            <div id="point_top">
+            <h2 id="point_title">Everest<span class="blue">TL</span> <span class="gray">: Safety &amp; Ergonomics</span></h2>
+    <h4 id="feature_sub">Flooring</h4>
+            </div>
+            <a id="feature_compare" href="#"><img src="images/compare_btn.png"></a>
+            <div class="clear"></div>
+            <div id="features">
+            <div class="media"></div>
+            <div class="media-image" data-media-id="1" style="background-image: URL(http://www.ccm-gd.com/media/image_everest_flooring_btn.png);" onclick="modal_trigger_func(this);"></div>
+            <div class="media-description">Heavy-Duty Concentrated Reefer Cargo Safety-Grip Floor</div>
+            <div class="clear"></div>
+            <div class="media"></div>
+            <div class="media-image" data-media-id="2" style="background-image: URL(http://www.ccm-gd.com/media/image_everest_flooring_2_btn.png);" onclick="modal_trigger_func(this);"></div>
+            <div class="media-description">
+            Heavy-Duty Concentrated Reefer Cargo Safety-Grip Floor 2
+    </div>
+    <div class="clear"></div>
+            </div>
+            <div id="opacity"></div>
+            <div class="modal" media-id="1" id="media-id-1">
+            <img class="modal-close" src="images/close_btn.png" onclick="hideModal();">
+            <div class="modal-title">Everest <span class="blue">TL</span> <span class="gray">: Safety &amp; Ergonomics</span></div>
+    <div></div>
+    <img src="file.png" style="width:875px; height:415px;">
+            <div class="modal-description">Heavy-Duty Concentrated Reefer Cargo Safety-Grip Floor is the highest forklift-rated floor in the industry and is a popular option for many grocery and food service applications. The positive traction Safety-Grip surface helps improve traction.
+    </div>
+    </div>
+    <div class="modal" media-id="2" id="media-id-2">
+            <img class="modal-close" src="images/close_btn.png" onclick="hideModal();">
+            <div class="modal-title">Everest <span class="blue">TL</span> <span class="gray">: Safety &amp; Ergonomics</span></div>
+    <div></div>
+    <img src="file.png" style="width:875px; height:415px;">
+            <div class="modal-description"></div>
+            </div>
+            <div class="modal" media-id="3" id="media-id-3"></div>
+            <div class="modal" media-id="4" id="media-id-4"></div>
+            <div class="modal" media-id="5" id="media-id-5"></div>
+            <div class="modal" media-id="6" id="media-id-6"></div>
+            <div class="modal" media-id="7" id="media-id-7"></div>
+            <div class="modal" media-id="8" id="media-id-8"></div>
+            <div class="modal" media-id="9" id="media-id-9"></div>
+            <div class="modal" media-id="10" id="media-id-10"></div>
+            <div class="modal" media-id="11" id="media-id-11"></div>
+            <div class="modal" media-id="12" id="media-id-12"></div>
+            -->
